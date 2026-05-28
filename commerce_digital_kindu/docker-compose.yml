@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    command: gunicorn core_project.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - '8000:8000'
+    environment:
+      - DJANGO_SECRET_KEY=replace-this-with-a-secure-key
+      - DJANGO_DEBUG=True
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://backend:8000/api
+    ports:
+      - '4174:80'
