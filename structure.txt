@@ -1,0 +1,5 @@
+commerce_digital_kindu/          # Dossier racine du projet
+│
+├── backend/                     # Partie logique, API et Base de données (Django/FastAPI)
+│
+└── frontend/                    # Partie Interface Utilisateur (React / Vue.js / HTML-CSS)

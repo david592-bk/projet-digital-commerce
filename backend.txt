@@ -1,0 +1,25 @@
+backend/
+│
+├── core_project/                # Configuration principale du projet
+│   ├── __init__.py
+│   ├── settings.py              # Configuration (Connexion MySQL, sécurité)
+│   ├── urls.py                  # Routage principal des API
+│   └── wsgi.py / asgi.py
+│
+├── authentication/              # Module de gestion des utilisateurs
+│   ├── models.py                # Table Utilisateurs (Acheteur, Entrepreneur, Livreur)
+│   ├── views.py                 # Logique d'inscription et de connexion
+│   └── urls.py
+│
+├── shops/                       # Module de gestion des entreprises et produits
+│   ├── models.py                # Tables Entreprises et Produits
+│   ├── views.py                 # Logique d'ajout de produits, modification de boutique
+│   └── urls.py
+│
+├── orders/                      # Module de gestion des commandes et livraisons
+│   ├── models.py                # Tables Commandes et Lignes de Commande
+│   ├── views.py                 # Logique de réservation, calcul livraison, validation cash
+│   └── urls.py
+│
+├── requirements.txt             # Liste des dépendances Python à installer
+└── manage.py                    # Script de commande Django
