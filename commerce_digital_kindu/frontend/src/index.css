@@ -5,3 +5,17 @@
 body {
   @apply bg-slate-50 text-slate-900 antialiased;
 }
+
+.page-transition {
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.page-transition.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition.fadeOut {
+  opacity: 0;
+  transform: translateY(12px);
+}

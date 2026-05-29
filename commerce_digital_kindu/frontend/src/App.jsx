@@ -1,87 +1,69 @@
-import { useEffect, useState } from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
-import api from './api'
-import AuthContext from './AuthContext'
-import HomePage from './pages/HomePage'
-import ShopDashboard from './pages/ShopDashboard'
-import DeliveryDashboard from './pages/DeliveryDashboard'
-import ProductDetailPage from './pages/ProductDetailPage'
-import RegisterPage from './pages/RegisterPage'
-import LoginPage from './pages/LoginPage'
-import ProfilePage from './pages/ProfilePage'
+import { useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import api from "./api";
+import AuthContext from "./AuthContext";
+
+import Header from "./components/Header";
+
+import HomePage from "./pages/HomePage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
+  const location = useLocation();
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [transitionStage, setTransitionStage] = useState("fadeIn");
 
   useEffect(() => {
-    const token = localStorage.getItem('kindu_token')
-    if (!token) {
-      return
+    if (
+      location.pathname !== displayLocation.pathname ||
+      location.search !== displayLocation.search
+    ) {
+      setTransitionStage("fadeOut");
+      const timeout = setTimeout(() => {
+        setDisplayLocation(location);
+        setTransitionStage("fadeIn");
+      }, 180);
+      return () => clearTimeout(timeout);
     }
-    api.get('/auth/user/')
+  }, [location, displayLocation]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("kindu_token");
+    if (!token) {
+      return;
+    }
+    api
+      .get("/auth/user/")
       .then((response) => setCurrentUser(response.data))
       .catch(() => {
-        localStorage.removeItem('kindu_token')
-        setCurrentUser(null)
-      })
-  }, [])
+        localStorage.removeItem("kindu_token");
+        setCurrentUser(null);
+      });
+  }, []);
 
   const logout = () => {
-    localStorage.removeItem('kindu_token')
-    setCurrentUser(null)
-  }
+    localStorage.removeItem("kindu_token");
+    setCurrentUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser, logout }}>
       <div className="min-h-screen bg-slate-100 text-slate-900">
-        <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl shadow-sm sticky top-0 z-40">
-          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <Link to="/" className="inline-flex items-center gap-3 text-xl font-bold text-slate-900">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-600 text-white">K</span>
-                Kindu Commerce
-              </Link>
-              <p className="mt-1 text-sm text-slate-500">Votre marketplace locale pour commerçants, clients et livreurs.</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 text-sm">
-              <Link className="text-slate-700 hover:text-slate-900" to="/">Accueil</Link>
-              <Link className="text-slate-700 hover:text-slate-900" to="/dashboard/shop">Entrepreneurs</Link>
-              <Link className="text-slate-700 hover:text-slate-900" to="/dashboard/delivery">Livreurs</Link>
-              {currentUser ? (
-                <>
-                  <Link className="text-slate-700 hover:text-slate-900" to="/profile">Mon profil</Link>
-                  <button
-                    type="button"
-                    className="rounded-full border border-slate-300 bg-white px-4 py-2 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
-                    onClick={logout}
-                  >
-                    Déconnexion
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link className="rounded-full border border-slate-300 bg-white px-4 py-2 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50" to="/auth/login">Connexion</Link>
-                  <Link className="rounded-full bg-sky-600 px-4 py-2 text-white transition hover:bg-sky-700" to="/auth/register">Inscription</Link>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-
+        <Header />
         <main className="mx-auto max-w-6xl px-4 py-10">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="/auth/register" element={<RegisterPage />} />
-            <Route path="/auth/login" element={<LoginPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/dashboard/shop" element={<ShopDashboard />} />
-            <Route path="/dashboard/delivery" element={<DeliveryDashboard />} />
-          </Routes>
+          <div className={`page-transition ${transitionStage}`}>
+            <Routes location={displayLocation}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/auth/register" element={<RegisterPage />} />
+              <Route path="/auth/login" element={<LoginPage />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </AuthContext.Provider>
-  )
+  );
 }
 
-export default App
+export default App;

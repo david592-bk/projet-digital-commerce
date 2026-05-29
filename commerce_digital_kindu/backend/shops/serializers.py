@@ -1,19 +1,38 @@
 from rest_framework import serializers
-from .models import MerchantProfile, Product
+from .models import MerchantProfile, Product, ProductImage
 
-class ProductSerializer(serializers.ModelSerializer):
-    shop_name = serializers.CharField(source='shop.name', read_only=True)
+class ProductImageSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
-        model = Product
-        fields = ['id', 'shop', 'shop_name', 'name', 'description', 'price', 'stock', 'photo', 'photo_url', 'is_featured', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at', 'photo_url']
+        model = ProductImage
+        fields = ['id', 'photo_url']
+        read_only_fields = ['id', 'photo_url']
 
     def get_photo_url(self, obj):
         request = self.context.get('request')
         if obj.photo:
             return request.build_absolute_uri(obj.photo.url) if request else obj.photo.url
+        return ''
+
+class ProductSerializer(serializers.ModelSerializer):
+    shop = serializers.PrimaryKeyRelatedField(queryset=MerchantProfile.objects.all(), required=False)
+    shop_name = serializers.CharField(source='shop.name', read_only=True)
+    photo_url = serializers.SerializerMethodField()
+    images = ProductImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'shop', 'shop_name', 'name', 'item_type', 'category', 'description', 'price', 'currency', 'stock', 'photo', 'photo_url', 'images', 'is_featured', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at', 'photo_url', 'images']
+
+    def get_photo_url(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            return request.build_absolute_uri(obj.photo.url) if request else obj.photo.url
+        first_image = obj.images.first()
+        if first_image and first_image.photo:
+            return request.build_absolute_uri(first_image.photo.url) if request else first_image.photo.url
         return ''
 
 class MerchantProfileSerializer(serializers.ModelSerializer):
