@@ -40,9 +40,16 @@ function LoginPage() {
         username: form.username,
         password: form.password,
       });
-      localStorage.setItem("kuhuza_token", response.data.token);
-      setCurrentUser(response.data);
-      setMessage(`Connecté en tant que ${response.data.username}`);
+      // backend returns { access, refresh, user }
+      const data = response.data || {};
+      const access = data.access || data.token || data.tokens?.access;
+      const refresh =
+        data.refresh || data.tokens?.refresh || data.token?.refresh;
+      if (access) localStorage.setItem("kuhuza_access", access);
+      if (refresh) localStorage.setItem("kuhuza_refresh", refresh);
+      const user = data.user || (data.username ? data : null);
+      setCurrentUser(user);
+      setMessage(`Connecté en tant que ${user?.username || "utilisateur"}`);
       // Redirect after short delay to show success message
       setTimeout(() => navigate("/"), 1000);
     } catch (error) {

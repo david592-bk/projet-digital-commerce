@@ -155,14 +155,14 @@ export default function Header() {
                 className="rounded-lg px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Boutiques
+                Produits
               </Link>
               <Link
-                to="/become-seller"
+                to="/shops"
                 className="rounded-lg px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Devenir vendeur
+                Boutiques
               </Link>
               <hr className="my-2 border-slate-200" />
               {currentUser ? (

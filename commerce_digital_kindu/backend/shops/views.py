@@ -27,7 +27,7 @@ class MerchantProfileMeView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return MerchantProfile.objects.get(owner=self.request.user)
+        return get_object_or_404(MerchantProfile, owner=self.request.user)
 
 class ProductListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()

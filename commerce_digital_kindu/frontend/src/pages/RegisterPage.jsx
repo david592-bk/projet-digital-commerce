@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
+import AuthContext from "../AuthContext";
 
 function RegisterPage() {
+  const { setCurrentUser } = useContext(AuthContext);
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -77,10 +79,28 @@ function RegisterPage() {
         password: form.password,
       };
       await api.post("/auth/register/", payload);
-      setMessage(
-        "Compte créé avec succès. Vous pouvez maintenant vous connecter.",
-      );
-      setTimeout(() => navigate("/auth/login"), 2000);
+      // attempt auto-login
+      try {
+        const loginResp = await api.post("/auth/login/", {
+          username: form.username,
+          password: form.password,
+        });
+        const data = loginResp.data || {};
+        const access = data.access || data.token || data.tokens?.access;
+        const refresh =
+          data.refresh || data.tokens?.refresh || data.token?.refresh;
+        if (access) localStorage.setItem("kuhuza_access", access);
+        if (refresh) localStorage.setItem("kuhuza_refresh", refresh);
+        const user = data.user || (data.username ? data : null);
+        setCurrentUser(user);
+        setMessage("Compte créé et connexion automatique réussie.");
+        setTimeout(() => navigate("/"), 1000);
+      } catch (loginErr) {
+        setMessage(
+          "Compte créé. Connexion automatique échouée — veuillez vous connecter.",
+        );
+        setTimeout(() => navigate("/auth/login"), 2000);
+      }
     } catch (error) {
       const raw =
         error.response?.data?.detail || error.response?.data || error.message;

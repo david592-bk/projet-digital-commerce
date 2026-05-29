@@ -47,6 +47,11 @@ class ShopAndProductAPITests(APITestCase):
         response = self.client.post('/api/shops/', self.shop_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_shop_me_without_shop_returns_404(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get('/api/shops/me/')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_list_shops(self):
         MerchantProfile.objects.create(owner=self.user, **self.shop_data)
         response = self.client.get('/api/shops/')

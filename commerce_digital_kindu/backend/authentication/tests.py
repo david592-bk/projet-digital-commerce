@@ -29,6 +29,8 @@ class AuthAPITests(APITestCase):
         self.assertEqual(response.data['username'], self.username)
         self.assertEqual(response.data['email'], self.email)
         self.assertNotIn('password', response.data)
+        self.assertNotIn('access', response.data)
+        self.assertNotIn('refresh', response.data)
 
     def test_login_returns_tokens_and_user(self):
         User.objects.create_user(username=self.username, email=self.email, password=self.password)

@@ -8,6 +8,12 @@ import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import ProductsPage from "./pages/ProductsPage";
+import ShopsPage from "./pages/ShopsPage";
+import DashboardPage from "./pages/dashboard/DashboardPage";
+import CreateShopPage from "./pages/dashboard/CreateShopPage";
+import CreateProductPage from "./pages/dashboard/CreateProductPage";
+import EditProductPage from "./pages/dashboard/EditProductPage";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -30,21 +36,23 @@ function App() {
   }, [location, displayLocation]);
 
   useEffect(() => {
-    const token = localStorage.getItem("kindu_token");
-    if (!token) {
+    const access = localStorage.getItem("kuhuza_access");
+    if (!access) {
       return;
     }
     api
       .get("/auth/user/")
       .then((response) => setCurrentUser(response.data))
       .catch(() => {
-        localStorage.removeItem("kindu_token");
+        localStorage.removeItem("kuhuza_access");
+        localStorage.removeItem("kuhuza_refresh");
         setCurrentUser(null);
       });
   }, []);
 
   const logout = () => {
-    localStorage.removeItem("kindu_token");
+    localStorage.removeItem("kuhuza_access");
+    localStorage.removeItem("kuhuza_refresh");
     setCurrentUser(null);
   };
 
@@ -58,6 +66,21 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/auth/register" element={<RegisterPage />} />
               <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/shops" element={<ShopsPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route
+                path="/dashboard/create-shop"
+                element={<CreateShopPage />}
+              />
+              <Route
+                path="/dashboard/products/new"
+                element={<CreateProductPage />}
+              />
+              <Route
+                path="/dashboard/products/:id/edit"
+                element={<EditProductPage />}
+              />
             </Routes>
           </div>
         </main>
