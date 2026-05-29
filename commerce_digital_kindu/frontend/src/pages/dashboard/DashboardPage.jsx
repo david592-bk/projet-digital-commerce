@@ -51,9 +51,13 @@ export default function DashboardPage() {
     setLoadingProducts(true);
     try {
       await api.delete(`/shops/products/${productId}/`);
-      setProducts((prevProducts) => prevProducts.filter((item) => item.id !== productId));
+      setProducts((prevProducts) =>
+        prevProducts.filter((item) => item.id !== productId),
+      );
     } catch (error) {
-      setErrorMessage("Impossible de supprimer le produit. Réessayez plus tard.");
+      setErrorMessage(
+        "Impossible de supprimer le produit. Réessayez plus tard.",
+      );
     } finally {
       setLoadingProducts(false);
     }

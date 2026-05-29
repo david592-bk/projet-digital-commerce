@@ -76,7 +76,9 @@ export default function EditProductPage() {
   if (!currentUser) {
     return (
       <div className="rounded-[2rem] bg-white p-8 shadow-xl">
-        <h1 className="text-3xl font-semibold text-slate-900">Modifier le produit</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">
+          Modifier le produit
+        </h1>
         <p className="mt-4 text-slate-600">
           Vous devez être connecté pour modifier un produit.
         </p>
@@ -109,7 +111,9 @@ export default function EditProductPage() {
   if (!product) {
     return (
       <div className="rounded-[2rem] bg-white p-8 shadow-xl">
-        <h1 className="text-3xl font-semibold text-slate-900">Produit introuvable</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">
+          Produit introuvable
+        </h1>
         <p className="mt-4 text-slate-600">
           Impossible de charger ce produit. Il a peut-être été supprimé.
         </p>
@@ -258,7 +262,9 @@ export default function EditProductPage() {
           disabled={loading}
           className="rounded-full bg-sky-600 px-6 py-3 text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading ? "Mise à jour en cours..." : "Enregistrer les modifications"}
+          {loading
+            ? "Mise à jour en cours..."
+            : "Enregistrer les modifications"}
         </button>
       </form>
     </div>

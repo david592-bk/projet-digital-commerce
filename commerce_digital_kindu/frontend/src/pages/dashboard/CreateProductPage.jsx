@@ -39,7 +39,9 @@ export default function CreateProductPage() {
     setMessage("");
 
     if (!shop?.id) {
-      setMessage("Vous devez d'abord créer une boutique avant de publier un produit.");
+      setMessage(
+        "Vous devez d'abord créer une boutique avant de publier un produit.",
+      );
       setLoading(false);
       return;
     }
@@ -71,7 +73,9 @@ export default function CreateProductPage() {
   if (!currentUser) {
     return (
       <div className="rounded-[2rem] bg-white p-8 shadow-xl">
-        <h1 className="text-3xl font-semibold text-slate-900">Créer un produit</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">
+          Créer un produit
+        </h1>
         <p className="mt-4 text-slate-600">
           Vous devez être connecté pour créer un produit.
         </p>
