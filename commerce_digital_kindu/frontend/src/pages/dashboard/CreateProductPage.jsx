@@ -18,6 +18,22 @@ export default function CreateProductPage() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!name.trim()) newErrors.name = "Le nom du produit est requis";
+    if (!description.trim())
+      newErrors.description = "La description est requise";
+    if (!price || Number(price) <= 0)
+      newErrors.price = "Le prix doit être supérieur à 0";
+    if (!category.trim()) newErrors.category = "La catégorie est requise";
+    if (itemType === "product" && (!stock || Number(stock) < 0)) {
+      newErrors.stock = "Le stock doit être défini pour un produit";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     if (!currentUser) {
@@ -35,8 +51,11 @@ export default function CreateProductPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
     setMessage("");
+    if (!validateForm()) {
+      return;
+    }
+    setLoading(true);
 
     if (!shop?.id) {
       setMessage(
@@ -48,13 +67,13 @@ export default function CreateProductPage() {
 
     const payload = {
       shop: shop.id,
-      name,
-      description,
+      name: name.trim(),
+      description: description.trim(),
       price: Number(price),
-      category,
+      category: category.trim(),
       item_type: itemType,
       stock: itemType === "product" ? Number(stock) : 0,
-      photo_url: photoUrl,
+      photo_url: photoUrl.trim(),
       is_featured: isFeatured,
     };
 
@@ -62,9 +81,12 @@ export default function CreateProductPage() {
       await api.post("/shops/products/", payload);
       navigate("/dashboard");
     } catch (error) {
-      setMessage(
-        "Impossible de créer le produit. Vérifiez les champs et réessayez.",
-      );
+      const errorData = error.response?.data || {};
+      const backendMessage =
+        typeof errorData === "object"
+          ? Object.values(errorData).join(", ")
+          : errorData.detail || "Impossible de créer le produit";
+      setMessage(`Erreur : ${backendMessage}`);
     } finally {
       setLoading(false);
     }
@@ -144,9 +166,15 @@ export default function CreateProductPage() {
             <input
               value={name}
               onChange={(event) => setName(event.target.value)}
-              required
-              className="mt-3 w-full rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+              className={`mt-3 w-full rounded-3xl border bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:ring-4 ${
+                errors.name
+                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                  : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
+              }`}
             />
+            {errors.name && (
+              <p className="mt-2 text-sm text-rose-600">{errors.name}</p>
+            )}
           </div>
 
           <div>
@@ -157,8 +185,15 @@ export default function CreateProductPage() {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               rows={4}
-              className="mt-3 w-full rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+              className={`mt-3 w-full rounded-3xl border bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:ring-4 ${
+                errors.description
+                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                  : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
+              }`}
             />
+            {errors.description && (
+              <p className="mt-2 text-sm text-rose-600">{errors.description}</p>
+            )}
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -171,9 +206,15 @@ export default function CreateProductPage() {
                 min="0"
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
-                required
-                className="mt-3 w-full rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                className={`mt-3 w-full rounded-3xl border bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:ring-4 ${
+                  errors.price
+                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                    : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
+                }`}
               />
+              {errors.price && (
+                <p className="mt-2 text-sm text-rose-600">{errors.price}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700">
@@ -183,8 +224,15 @@ export default function CreateProductPage() {
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
                 placeholder="Ex: alimentation, mode, service"
-                className="mt-3 w-full rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                className={`mt-3 w-full rounded-3xl border bg-slate-50 px-5 py-4 text-slate-900 outline-none focus:ring-4 ${
+                  errors.category
+                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                    : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
+                }`}
               />
+              {errors.category && (
+                <p className="mt-2 text-sm text-rose-600">{errors.category}</p>
+              )}
             </div>
           </div>
 

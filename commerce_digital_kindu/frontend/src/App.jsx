@@ -6,6 +6,7 @@ import AuthContext from "./AuthContext";
 import Header from "./components/Header";
 
 import HomePage from "./pages/HomePage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import ProductsPage from "./pages/ProductsPage";
@@ -60,10 +61,11 @@ function App() {
     <AuthContext.Provider value={{ currentUser, setCurrentUser, logout }}>
       <div className="min-h-screen bg-slate-100 text-slate-900">
         <Header />
-        <main className="mx-auto max-w-6xl px-4 py-10">
+        <main className="mx-auto max-w-7xl px-4 py-10">
           <div className={`page-transition ${transitionStage}`}>
             <Routes location={displayLocation}>
               <Route path="/" element={<HomePage />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/auth/register" element={<RegisterPage />} />
               <Route path="/auth/login" element={<LoginPage />} />
               <Route path="/products" element={<ProductsPage />} />
