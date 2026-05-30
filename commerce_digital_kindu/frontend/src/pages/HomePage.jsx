@@ -104,7 +104,7 @@ function HomePage() {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 w-full max-w-full overflow-x-hidden">
       {/* 1. Hero Section - Redesigned with premium dark theme & radial glow */}
       <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-tr from-slate-900 via-slate-800 to-sky-950 px-6 py-12 shadow-2xl sm:px-12 sm:py-20 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.15),transparent_45%)]"></div>
@@ -122,21 +122,21 @@ function HomePage() {
             <div className="pt-2 flex flex-col gap-4 sm:flex-row sm:items-center">
               <button
                 onClick={scrollToCatalog}
-                className="inline-flex items-center justify-center rounded-2xl bg-sky-500 px-7 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-sky-600 hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-2xl bg-sky-500 px-7 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-sky-600 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto text-center"
               >
                 Explorer le catalogue
               </button>
               {!currentUser ? (
                 <Link
                   to="/auth/register"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-600 bg-slate-800/40 backdrop-blur px-7 py-4 text-sm font-bold text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-600 bg-slate-800/40 backdrop-blur px-7 py-4 text-sm font-bold text-slate-200 transition hover:bg-slate-800 hover:text-white w-full sm:w-auto text-center"
                 >
                   Créer un compte
                 </Link>
               ) : (
                 <Link
                   to="/dashboard"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-600 bg-slate-800/40 backdrop-blur px-7 py-4 text-sm font-bold text-slate-200 transition hover:bg-slate-800 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-600 bg-slate-800/40 backdrop-blur px-7 py-4 text-sm font-bold text-slate-200 transition hover:bg-slate-800 hover:text-white w-full sm:w-auto text-center"
                 >
                   Tableau de bord
                 </Link>
@@ -293,7 +293,7 @@ function HomePage() {
                 <div className="pt-2">
                   <Link
                     to={`/product/${carouselItems[activeSlide].id}`}
-                    className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-8 py-3.5 text-sm font-bold text-white shadow hover:bg-sky-700 transition hover:shadow-lg"
+                    className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-8 py-3.5 text-sm font-bold text-white shadow hover:bg-sky-700 transition hover:shadow-lg w-full sm:w-auto text-center"
                   >
                     Commander & Détails
                   </Link>
@@ -309,10 +309,10 @@ function HomePage() {
       </section>
 
       {/* 3. Catalog Section with Tabs, Search, and Grid */}
-      <section id="catalog-section" className="grid gap-8 lg:grid-cols-12">
+      <section id="catalog-section" className="grid gap-8 lg:grid-cols-12 w-full min-w-0">
         {/* Left Side: Catalog Content (9 cols) */}
-        <div className="lg:col-span-8 space-y-8">
-          <div className="rounded-[2.5rem] bg-white p-6 sm:p-8 shadow-xl border border-slate-100 space-y-6">
+        <div className="lg:col-span-8 space-y-8 min-w-0 w-full">
+          <div className="rounded-3xl sm:rounded-[2.5rem] bg-white p-4 sm:p-8 shadow-xl border border-slate-100 space-y-6 overflow-hidden w-full min-w-0">
             {/* Title & Count */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -329,7 +329,7 @@ function HomePage() {
             </div>
 
             {/* Search Input and Sort Dropdown */}
-            <div className="grid gap-4 sm:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-4 w-full min-w-0">
               <div className="relative sm:col-span-3">
                 <input
                   type="search"
@@ -358,7 +358,7 @@ function HomePage() {
             </div>
 
             {/* Category tabs (scrollable on mobile) */}
-            <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide -mx-2 px-2">
+            <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 w-full min-w-0">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
@@ -386,11 +386,11 @@ function HomePage() {
                 <p className="text-xs text-slate-500">Essayez de modifier vos filtres ou vos termes de recherche.</p>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2 w-full min-w-0">
                 {sortedProducts.map((product) => (
                   <article
                     key={product.id}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl w-full min-w-0"
                   >
                     {/* Visual Section */}
                     <div className="relative aspect-video w-full overflow-hidden bg-slate-50 border-b border-slate-100">
@@ -421,7 +421,7 @@ function HomePage() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="p-5 flex-grow flex flex-col justify-between space-y-4">
+                    <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-4">
                       <div className="space-y-1.5">
                         <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                           Boutique : {product.shop_name}
@@ -437,7 +437,7 @@ function HomePage() {
                       </div>
 
                       {/* Foot Content */}
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
                         <div>
                           <span className="text-[10px] font-bold text-slate-400 uppercase block">Prix</span>
                           <span className="text-base font-extrabold text-slate-900">
@@ -460,9 +460,9 @@ function HomePage() {
         </div>
 
         {/* Right Side: Sidebar (4 cols) */}
-        <aside className="lg:col-span-4 space-y-6">
+        <aside className="lg:col-span-4 grid gap-6 md:grid-cols-2 lg:grid-cols-1 min-w-0 w-full">
           {/* Card: Become Merchant */}
-          <div className="rounded-[2.5rem] bg-slate-950 p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+          <div className="rounded-3xl sm:rounded-[2.5rem] bg-slate-950 p-4 sm:p-8 text-white shadow-xl relative overflow-hidden w-full min-w-0">
             <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-500/10 blur-xl"></div>
             <div className="relative space-y-5">
               <span className="inline-flex rounded-full bg-cyan-400/10 border border-cyan-400/20 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-cyan-400">
@@ -519,7 +519,7 @@ function HomePage() {
           </div>
 
           {/* Card: Delivery service */}
-          <div className="rounded-[2.5rem] bg-white p-6 border border-slate-100 shadow-xl space-y-4">
+          <div className="rounded-3xl sm:rounded-[2.5rem] bg-white p-4 sm:p-6 border border-slate-100 shadow-xl space-y-4 overflow-hidden w-full min-w-0">
             <h4 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
               <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -541,7 +541,7 @@ function HomePage() {
       </section>
 
       {/* 4. Bottom Call To Action Banner */}
-      <section className="rounded-[2.5rem] bg-gradient-to-r from-sky-50 to-white p-8 sm:p-10 border border-sky-100 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <section className="rounded-3xl sm:rounded-[2.5rem] bg-gradient-to-r from-sky-50 to-white p-6 sm:p-10 border border-sky-100 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-6 w-full min-w-0">
         <div className="space-y-2">
           <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             Prêt à moderniser vos habitudes ?
@@ -550,18 +550,18 @@ function HomePage() {
             Que vous soyez acheteur pour consommer local, ou commerçant pour digitaliser vos ventes, Kuhuza est conçu pour vous.
           </p>
         </div>
-        <div className="shrink-0">
+        <div className="shrink-0 w-full md:w-auto">
           {!currentUser ? (
             <Link
               to="/auth/register"
-              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-7 py-3.5 text-xs font-bold text-white shadow hover:bg-sky-700 transition"
+              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 sm:px-7 sm:py-3.5 text-xs font-bold text-white shadow hover:bg-sky-700 transition w-full md:w-auto text-center"
             >
               Créer mon compte maintenant
             </Link>
           ) : (
             <Link
               to="/dashboard"
-              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-7 py-3.5 text-xs font-bold text-white shadow hover:bg-sky-700 transition"
+              className="inline-flex items-center justify-center rounded-2xl bg-sky-600 px-4 py-3 sm:px-7 sm:py-3.5 text-xs font-bold text-white shadow hover:bg-sky-700 transition w-full md:w-auto text-center"
             >
               Aller sur mon tableau de bord
             </Link>
