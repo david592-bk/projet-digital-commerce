@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
 import AuthContext from "../AuthContext";
+import { MOCK_PRODUCTS } from "../mockData";
 
 function HomePage() {
   const { currentUser } = useContext(AuthContext);
@@ -9,6 +10,7 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isMockData, setIsMockData] = useState(false);
 
   // Filter and Sort states
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -18,8 +20,20 @@ function HomePage() {
     setLoading(true);
     api
       .get("/shops/products/", { params: { q: query } })
-      .then((response) => setProducts(response.data))
-      .catch(() => setProducts([]))
+      .then((response) => {
+        const data = response.data;
+        if (data.length > 0) {
+          setProducts(data);
+          setIsMockData(false);
+        } else {
+          setProducts(MOCK_PRODUCTS);
+          setIsMockData(true);
+        }
+      })
+      .catch(() => {
+        setProducts(MOCK_PRODUCTS);
+        setIsMockData(true);
+      })
       .finally(() => setLoading(false));
   }, [query]);
 
@@ -110,7 +124,7 @@ function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.15),transparent_45%)]"></div>
         <div className="relative mx-auto flex max-w-6xl flex-col gap-12 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl space-y-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 px-4.5 py-1.5 text-xs font-bold uppercase tracking-wider text-sky-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 px-2 py-1 text-xs font-bold uppercase tracking-wider text-sky-400">
               Kuhuza-Digital Kindu
             </span>
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl leading-none">
@@ -203,9 +217,8 @@ function HomePage() {
                   <button
                     key={index}
                     type="button"
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === activeSlide ? "w-6 bg-sky-600" : "w-2 bg-slate-200"
-                    }`}
+                    className={`h-2 rounded-full transition-all duration-300 ${index === activeSlide ? "w-6 bg-sky-600" : "w-2 bg-slate-200"
+                      }`}
                     onClick={() => setActiveSlide(index)}
                     aria-label={`Slide ${index + 1}`}
                   />
@@ -363,11 +376,10 @@ function HomePage() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold border transition ${
-                    selectedCategory === cat.id
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
+                  className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold border transition ${selectedCategory === cat.id
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                    }`}
                 >
                   {cat.label}
                 </button>
@@ -386,75 +398,90 @@ function HomePage() {
                 <p className="text-xs text-slate-500">Essayez de modifier vos filtres ou vos termes de recherche.</p>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2 w-full min-w-0">
-                {sortedProducts.map((product) => (
-                  <article
-                    key={product.id}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl w-full min-w-0"
-                  >
-                    {/* Visual Section */}
-                    <div className="relative aspect-video w-full overflow-hidden bg-slate-50 border-b border-slate-100">
-                      <Link to={`/product/${product.id}`} className="block h-full w-full">
-                        {product.photo_url ? (
-                          <img
-                            src={product.photo_url}
-                            alt={product.name}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-slate-300">
-                            Pas d'image
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                      </Link>
+              <>
+                {/* Mock data notice */}
+                {isMockData && (
+                  <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3.5 text-sm text-amber-800">
+                    <svg className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>
+                      <strong>Aperçu démonstratif :</strong> Aucun produit réel n'est encore disponible. Ces articles sont des exemples pour illustrer la plateforme.{" "}
+                      <Link to="/become-seller" className="underline font-semibold hover:text-amber-900">Devenez vendeur</Link> pour publier vos vrais produits !
+                    </span>
+                  </div>
+                )}
 
-                      {/* Floating Category tag */}
-                      <span
-                        className={`absolute left-4 top-4 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow ${getCategoryTagStyles(
-                          product.category,
-                          product.item_type === "service",
-                        )}`}
-                      >
-                        {getCategoryLabel(product.category, product.item_type === "service")}
-                      </span>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-4">
-                      <div className="space-y-1.5">
-                        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-                          Boutique : {product.shop_name}
-                        </span>
-                        <Link to={`/product/${product.id}`}>
-                          <h3 className="text-base font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition">
-                            {product.name}
-                          </h3>
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2 w-full min-w-0">
+                  {sortedProducts.map((product) => (
+                    <article
+                      key={product.id}
+                      className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl w-full min-w-0"
+                    >
+                      {/* Visual Section */}
+                      <div className="relative aspect-video w-full overflow-hidden bg-slate-50 border-b border-slate-100">
+                        <Link to={`/product/${product.id}`} className="block h-full w-full">
+                          {product.photo_url ? (
+                            <img
+                              src={product.photo_url}
+                              alt={product.name}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-slate-300">
+                              Pas d'image
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                         </Link>
-                        <p className="text-xs leading-relaxed text-slate-500 line-clamp-2">
-                          {product.description || "Aucune description fournie pour le moment."}
-                        </p>
-                      </div>
 
-                      {/* Foot Content */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase block">Prix</span>
-                          <span className="text-base font-extrabold text-slate-900">
-                            {parseFloat(product.price).toLocaleString()} FC
-                          </span>
-                        </div>
-                        <Link
-                          to={`/product/${product.id}`}
-                          className="rounded-full bg-sky-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-sky-700 hover:shadow"
+                        {/* Floating Category tag */}
+                        <span
+                          className={`absolute left-4 top-4 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow ${getCategoryTagStyles(
+                            product.category,
+                            product.item_type === "service",
+                          )}`}
                         >
-                          Détails & Achat
-                        </Link>
+                          {getCategoryLabel(product.category, product.item_type === "service")}
+                        </span>
                       </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+
+                      {/* Content Section */}
+                      <div className="p-4 sm:p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                            Boutique : {product.shop_name}
+                          </span>
+                          <Link to={`/product/${product.id}`}>
+                            <h3 className="text-base font-bold text-slate-900 line-clamp-1 hover:text-sky-600 transition">
+                              {product.name}
+                            </h3>
+                          </Link>
+                          <p className="text-xs leading-relaxed text-slate-500 line-clamp-2">
+                            {product.description || "Aucune description fournie pour le moment."}
+                          </p>
+                        </div>
+
+                        {/* Foot Content */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                          <div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase block">Prix</span>
+                            <span className="text-base font-extrabold text-slate-900">
+                              {parseFloat(product.price).toLocaleString()} FC
+                            </span>
+                          </div>
+                          <Link
+                            to={`/product/${product.id}`}
+                            className="rounded-full bg-sky-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-sky-700 hover:shadow"
+                          >
+                            Détails & Achat
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>

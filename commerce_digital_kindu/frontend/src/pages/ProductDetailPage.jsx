@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import AuthContext from "../AuthContext";
+import { MOCK_PRODUCT_DETAILS, MOCK_PRODUCTS } from "../mockData";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -30,7 +31,28 @@ export default function ProductDetailPage() {
     setError("");
     setOrderMessage({ type: "", text: "" });
 
-    // Fetch product details
+    // Check if this is a mock product
+    if (id && id.startsWith("mock-")) {
+      const mockDetail = MOCK_PRODUCT_DETAILS[id];
+      if (mockDetail) {
+        if (isMounted) {
+          setProduct(mockDetail);
+          setActiveImage(mockDetail.photo_url || "");
+          setQuantity(1);
+          setShop(mockDetail.shop_detail || null);
+          setRelatedProducts(mockDetail.related || []);
+          setLoading(false);
+        }
+      } else {
+        if (isMounted) {
+          setError("Produit introuvable.");
+          setLoading(false);
+        }
+      }
+      return () => { isMounted = false; };
+    }
+
+    // Fetch product details from API
     api
       .get(`/shops/products/${id}/`)
       .then((res) => {
@@ -63,7 +85,15 @@ export default function ProductDetailPage() {
                   p.category === prodData.category && p.id !== prodData.id,
               )
               .slice(0, 4);
-            setRelatedProducts(filtered);
+            // If no real related products, use mock ones from same category
+            if (filtered.length === 0) {
+              const mockRelated = MOCK_PRODUCTS
+                .filter((p) => p.category === prodData.category && p.id !== prodData.id)
+                .slice(0, 4);
+              setRelatedProducts(mockRelated);
+            } else {
+              setRelatedProducts(filtered);
+            }
           })
           .catch(() => {
             if (isMounted) setRelatedProducts([]);
@@ -192,13 +222,19 @@ export default function ProductDetailPage() {
           Une erreur est survenue
         </h2>
         <p className="mt-2 text-slate-600">{error || "Produit introuvable"}</p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"
           >
             Retourner à l'accueil
           </button>
+          <Link
+            to="/products"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+          >
+            Voir les produits exemple
+          </Link>
         </div>
       </div>
     );
@@ -206,6 +242,18 @@ export default function ProductDetailPage() {
 
   return (
     <div className="space-y-10">
+      {/* Mock product notice */}
+      {product.is_mock && (
+        <div className="flex items-center gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3.5 text-sm text-amber-800">
+          <svg className="h-5 w-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>
+            <strong>Produit de démonstration :</strong> Ce produit est un exemple fictif. Inscrivez-vous comme vendeur pour publier vos vrais produits !
+          </span>
+        </div>
+      )}
+
       {/* Fil d'Ariane (Breadcrumbs) */}
       <nav className="flex text-sm text-slate-500" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-3">
